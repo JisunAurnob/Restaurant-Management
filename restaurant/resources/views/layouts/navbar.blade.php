@@ -240,6 +240,34 @@
         </li>
         @endif
 
+        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'client')
+        <li class="nav-item {{ request()->is('admin/'.Auth::user()->role.'/add-product') ? 'menu-open' : '' }}
+          {{ request()->is('admin/'.Auth::user()->role.'/products') ? 'menu-open' : '' }}">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-edit"></i>
+            <p>
+              Manage Product
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            
+            <li class="nav-item">
+              <a href="{{route('add_product', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/add-product') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Add Product</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('show_products', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/products') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Show Products</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        @endif
+
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-th"></i>

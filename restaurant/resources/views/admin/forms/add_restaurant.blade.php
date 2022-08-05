@@ -117,7 +117,7 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label class="col-md-4 col-form-label text-md-end" for="restaurant_photo">Restaurant Image<span class="text-danger">*</span></label>
+                                    <label class="col-md-4 col-form-label text-md-end" for="input_photo">Restaurant Image<span class="text-danger">*</span></label>
                                     <div class="col-md-6">
                                         <img id="preview-image" src=""
                                         alt="Restaurant Picture" onerror="this.style.display='none'" style="max-height: 250px; max-width: 250px;">

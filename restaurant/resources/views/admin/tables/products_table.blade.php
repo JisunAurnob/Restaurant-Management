@@ -11,12 +11,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>All Menus</h1>
+                        <h1>All Products</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Admin</a></li>
-                            <li class="breadcrumb-item active">All Menus</li>
+                            <li class="breadcrumb-item active">All Products</li>
                         </ol>
                     </div>
                 </div>
@@ -37,17 +37,22 @@
                 <div class="card-body">
                   <div class="row mb-3">
                     <div class="col-md-6">
+                        <label for="restaurant_id"
+                        class="col-md-4 col-form-label text-md-end">Restaurant</label>
                         <select name="restaurant_id" id="restaurant_id" class="form-control"  data-live-search="true" aria-label="Select Restaurant">
                           <option value="">Select Your Restaurant</option>
                           @foreach ($restaurants as $restaurant)
                             <option value="{{$restaurant->id}}">{{$restaurant->restaurant_name}}</option> 
                             @endforeach                   
-                            </select> 
-                        @error('restaurant_id')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
+                            </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="menu_id" class="col-md-4 col-form-label text-md-end">Menu</label>
+                        <select name="menu_id" id="menu_id" class="form-control"
+                            data-live-search="true" aria-label="Select Menu">
+                            <option>Select Menu</option>
+                        </select>
                     </div>
                 </div>
                     {{-- @if (!empty($menus[0]['id'])) --}}
@@ -55,10 +60,10 @@
                             <thead class="thead-dark">
                                 <tr>
                                     <th style="width: 10px">#</th>
-                                    <th>Menu Name</th>
+                                    <th>Product Name</th>
                                     {{-- <th>Email</th> --}}
-                                    <th>Menu Description</th>
-                                    <th>Menu Picture</th>
+                                    <th>Product Description</th>
+                                    <th>Product Picture</th>
                                     {{-- <th>Experience</th>
                                 <th>Salary</th>
                                 <th>Vacation</th>
@@ -125,11 +130,38 @@
 
                 $("#restaurant_id").change(function() {
                     var id = $(this).val();
+                    $('#menu_id').empty();
+
+                    $('#menu_id').append('<option value="">Select Menu</option>');
+                    // var url = '{{ route('search_menu', ['id' => 'id']) }}'
+                    var url = '{{ route('search_menu', ':id') }}';
+                    url = url.replace(':id', id);
+                    // console.log(url);
+                    // var firstDropVal = $('#').val();
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        data: {},
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(key, value) {
+                                // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
+
+                                $('#menu_id').append('<option value="' + value.id + '">' +
+                                    value.menu_name + '</option>')
+                            });
+
+                        }
+                    })
+                });
+
+
+                $("#menu_id").change(function() {
+                    var id = $(this).val();
                     $('#menu-row').empty();
                     // var url = '{{route("search_menu", ["id" =>'id'])}}'
-                    var url = '{{ route("search_menu",":id") }}';
+                    var url = '{{ route("search_product",":id") }}';
                     url = url.replace(':id', id);
-                    console.log(url);
                     // var firstDropVal = $('#').val();
                     $.ajax({
                         url: url,
@@ -139,11 +171,10 @@
                         success: function(data) {
                           console.log(data);
                             $.each(data, function(key, value) {
-                              console.log(data);
                               // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
                               
-                                $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.menu_name+'</td>'+'<td style="max-width: 250px;">'+value.menu_description+'</td>'+'<td>'+
-                                  '<img src="'+'{{asset('storage').'/'}}'+value.menu_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+
+                                $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.product_name+'</td>'+'<td style="max-width: 250px;">'+value.product_description+'</td>'+'<td>'+
+                                  '<img src="'+'{{asset('storage').'/'}}'+value.product_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+
                                   '<td><a href="edit-menu/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a href="menu/delete/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });
