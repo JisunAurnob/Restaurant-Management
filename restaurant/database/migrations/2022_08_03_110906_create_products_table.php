@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('product_name');
             $table->string('product_description','1000');
             $table->string('product_picture')->nullable();
-            $table->string('menu');
             $table->string('product_type');
             $table->string('product_status');
+            $table->unsignedBigInteger('menu_id');
             $table->timestamps();
+
+            $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
         });
     }
 

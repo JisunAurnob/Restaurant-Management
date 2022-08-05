@@ -59,7 +59,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     Route::get('{slug}/edit-menu/{id}', [AdminController::class, 'edit_menu'])->name('edit_menu');
     Route::post('{slug}/edit-menu', [AdminController::class, 'edit_restaurant_post'])->name('edit_menu_post');
     Route::get('{slug}/menus', [AdminController::class, 'show_menus'])->name('show_menus');
+    Route::get('menus-search/{id}', [AdminController::class, 'menu_search_by_restaurant_id'])->name('search_menu');
     //Menu
+    //Product
+    Route::get('{slug}/add-product', [AdminController::class, 'add_product'])->name('add_product');
+    Route::post('add-product', [AdminController::class, 'add_product_post'])->name('add_product_post');
+    Route::get('{slug}/products', [AdminController::class, 'show_products'])->name('show_products');
+    Route::get('products-search/{id}', [AdminController::class, 'product_search_by_menu_id'])->name('search_product');
+    //Product
+
 });
 
 
