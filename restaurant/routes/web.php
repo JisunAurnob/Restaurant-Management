@@ -64,7 +64,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     //Product
     Route::get('{slug}/add-product', [AdminController::class, 'add_product'])->name('add_product');
     Route::post('add-product', [AdminController::class, 'add_product_post'])->name('add_product_post');
+    Route::post('edit-product', [AdminController::class, 'edit_product_post'])->name('edit_product_post');
+    Route::get('{slug}/edit-product-with-attributes/{id}', [AdminController::class, 'edit_product_with_attributes'])->name('edit_product_with_attributes');
+    Route::post('edit-product-with-attributes', [AdminController::class, 'edit_product_with_attributes_post'])->name('edit_product_with_attributes_post');
     Route::get('{slug}/products', [AdminController::class, 'show_products'])->name('show_products');
+    Route::get('{slug}/{pid}/delete-product-attributes/{id}', [AdminController::class, 'delete_product_attribute'])->name('delete_product_attribute');
+    Route::get('{slug}/{pid}/delete-product/{id}', [AdminController::class, 'delete_product'])->name('delete_product');
     Route::get('products-search/{id}', [AdminController::class, 'product_search_by_menu_id'])->name('search_product');
     //Product
 

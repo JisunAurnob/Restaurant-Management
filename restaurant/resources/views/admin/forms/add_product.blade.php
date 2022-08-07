@@ -32,7 +32,6 @@
                             <div class="card-body">
                                 <form method="POST" enctype="multipart/form-data" action="{{ route('add_product_post') }}">
                                     @csrf
-                                    <input type="hidden" name="client_id" value="{{ Auth::user()->id }}">
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label for="restaurant_id"
@@ -55,7 +54,7 @@
                                         <div class="col-md-6">
                                             <label for="menu_id" class="col-md-4 col-form-label text-md-end">Menu<span
                                                     class="text-danger">*</span></label>
-                                            <select name="menu_id" id="menu_id" class="form-control"
+                                            <select name="menu_id" id="menu_id" class="form-control @error('menu_id') is-invalid @enderror"
                                                 data-live-search="true" aria-label="Select Menu">
                                                 <option>Select Menu</option>
                                             </select>
@@ -77,7 +76,7 @@
                                                 name="product_name" value="{{ old('product_name') }}" required
                                                 autocomplete="product_name" autofocus>
 
-                                            @error('restaurant_name')
+                                            @error('product_name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
