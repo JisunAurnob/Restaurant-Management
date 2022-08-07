@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Models\Menu;
 use App\Models\Product;
+use App\Models\Product_attribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -208,13 +211,13 @@ class AdminController extends Controller
 
     function menu_search_by_restaurant_id($id)
     {
-            // $total = '';
-            if (Restaurant::where('id', $id)->exists()) {
-                $data = Menu::where('restaurant_id', $id)
-                    ->get();
-                //    $total = $data[0]->market_name;
-            }
-            return $data;
+        // $total = '';
+        if (Restaurant::where('id', $id)->exists()) {
+            $data = Menu::where('restaurant_id', $id)
+                ->get();
+            //    $total = $data[0]->market_name;
+        }
+        return $data;
     }
 
     public function add_product()
@@ -236,7 +239,7 @@ class AdminController extends Controller
                 'product_name' => 'required|min:2|string|max:255',
                 'product_description' => 'required|max:1000',
                 'product_type' => 'required|string',
-                'product_picture' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+                'product_picture' => 'required|image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
                 'menu_id' => 'required'
             ],
             []
@@ -278,12 +281,95 @@ class AdminController extends Controller
 
     function product_search_by_menu_id($id)
     {
-            // $total = '';
-            if (Product::where('id', $id)->exists()) {
-                $data = Product::where('menu_id', $id)
-                    ->get();
-                //    $total = $data[0]->market_name;
-            }
-            return $data;
+        // $total = '';
+            $data = Product::where('menu_id', $id)
+                ->get();
+            //    $total = $data[0]->market_name;
+        return $data;
+    }
+
+    public function edit_product_post(Request $request)
+    {
+        $request->validate(
+            [
+                'product_name' => 'required|min:2|string|max:255',
+                'product_description' => 'required|max:1000',
+                'product_type' => 'required|string',
+                'product_picture' => 'image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
+                'product_status' => 'required|string'
+            ],
+            []
+        );
+
+        $product = Product::find($request->product_id);
+        $product->product_name = $request->product_name;
+        $product->product_description = $request->product_description;
+        $product->product_type = $request->product_type;
+
+        if (!empty($request->file('product_picture'))) {
+            // dd(storage_path('app/public/'.$product->product_picture));
+            
+            Storage::delete('public/'.$product->product_picture);
+
+            $path = $request->file('product_picture')->store('public/restaurants/product_pictures');
+
+            $product->product_picture = substr($path, 7);
+        }
+        $product->product_status = $request->product_status;
+        $product->save();
+
+        return redirect()->route('show_products', ['slug' => auth()->user()->role]);
+    }
+
+    public function edit_product_with_attributes($slug, $id)
+    {
+        //dd($id);
+        if (auth()->user()->role == 'client' && Restaurant::where('client_id', '=', auth()->user()->id)->exists()) {
+
+            $product = Product::where('id', '=', $id)->with('product_attributes')->get();
+            // dd($product);
+        } else if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff') {
+            $product = Product::where('id', '=', $id)->with('product_attributes')->get();
+        }
+
+        return view('admin.forms.add_product_attributes', compact('product'));
+    }
+
+    public function edit_product_with_attributes_post(Request $request)
+    {
+        $request->validate(
+            [
+                'product_size' => 'required',
+                'product_price' => 'required',
+                'product_discount' => 'required',
+                'product_id' => 'required'
+            ],
+            []
+        );
+
+        $product = new Product_attribute();
+        $product->product_size = $request->product_size;
+        $product->product_price = $request->product_price;
+        $product->product_discount = $request->product_discount;
+        $product->product_id = $request->product_id;
+        $product->save();
+
+        return redirect()->route('edit_product_with_attributes', ['slug' => auth()->user()->role, 'id' => $request->product_id]);
+    }
+
+    public function delete_product_attribute($role, $pid, $id)
+    {
+        $pa = Product_attribute::find($id);
+        $pa->delete();
+        return redirect()->route('edit_product_with_attributes', ['slug' => auth()->user()->role, 'id' => $pid]);
+        // return redirect()->route('show_users', ['role' => $role]);
+    }
+
+    public function delete_product($role, $pid, $id)
+    {
+        $pa = Product::find($id);
+        $pa->delete();
+        return redirect()->route('edit_product_with_attributes', ['slug' => auth()->user()->role, 'id' => $pid]);
+        // return redirect()->route('show_users', ['role' => $role]);
     }
 }
