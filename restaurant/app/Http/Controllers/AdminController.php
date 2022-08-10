@@ -17,7 +17,22 @@ class AdminController extends Controller
     //
     public function dashboard()
     {
-        return view('dashboard');
+        // dd(auth()->user());
+        $userCount = count(User::all());
+        if (auth()->user()->role == 'client') {
+            $restaCount = count(Restaurant::where('client_id', '=', auth()->user()->id)->get());
+        } else {
+
+            $restaCount = count(Restaurant::all());
+        }
+        $productCount = count(Product::all());
+        $clientCount = count(User::where('role', '=', 'client')->get());
+        // dd($userCount);
+        return view('dashboard')
+            ->with('userCount', $userCount)
+            ->with('restaCount', $restaCount)
+            ->with('clientCount', $clientCount)
+            ->with('productCount', $productCount);
     }
     public function profile()
     {
@@ -85,7 +100,7 @@ class AdminController extends Controller
                 'address' => 'required|max:255',
                 'restaurant_type' => 'required|string',
                 'slogan' => 'required|string|max:255',
-                'restaurant_photo' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+                'restaurant_photo' => 'required|image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
                 'opening_time' => 'required',
                 'closing_time' => 'required',
                 'business_days' => 'required|string|max:255'
@@ -126,29 +141,62 @@ class AdminController extends Controller
         }
         return view('admin.tables.restaurants_table', compact('restaurants'));
     }
-    public function edit_restaurant($id)
-    { //not done
-        $staff = User::find($id);
-        return view('admin.forms.edit_staffs', compact('staff'));
+    public function edit_restaurant($role, $id)
+    {
+        $restaurant = Restaurant::find($id);
+        return view('admin.forms.edit_restaurant', compact('restaurant'));
     }
 
     public function edit_restaurant_post(Request $request)
-    { //not done
+    {
         $request->validate(
             [
-                'name' => 'required|string|max:255',
+                'restaurant_name' => 'required|min:2|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
-                // 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($request->id)],
+                'phone' => 'required|max:22|regex:/^([0-9\s\-\+\(\)]*)$/',
+                'address' => 'required|max:255',
+                'restaurant_type' => 'required|string',
+                'slogan' => 'required|string|max:255',
+                'restaurant_photo' => 'image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
+                'opening_time' => 'required',
+                'closing_time' => 'required',
+                'business_days' => 'required|string|max:255'
             ],
             []
         );
 
-        $staff = User::find($request->id);
-        $staff->name = $request->name;
-        $staff->email = $request->email;
-        $staff->save();
+        $restaurant = Restaurant::find($request->id);
+        $restaurant->restaurant_name = $request->restaurant_name;
+        $restaurant->restaurant_type = $request->restaurant_type;
+        $restaurant->slogan = $request->slogan;
+        $restaurant->email = $request->email;
+        $restaurant->phone = $request->phone;
+        $restaurant->address = $request->address;
+        if (!empty($request->file('restaurant_photo'))) {
+            // dd(storage_path('app/public/'.$product->product_picture));
 
-        return redirect()->route('show_staffs');
+            Storage::delete('public/' . $restaurant->restaurant_photo);
+
+            $path = $request->file('restaurant_photo')->store('public/restaurants/pictures');
+
+            $restaurant->restaurant_photo = substr($path, 7);
+        }
+        $restaurant->opening_time = $request->opening_time;
+        $restaurant->closing_time = $request->closing_time;
+        $restaurant->business_days = $request->business_days;
+        $restaurant->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '', $request->restaurant_name)));
+        $restaurant->save();
+
+        return redirect()->route('show_restaurants', ['slug' => auth()->user()->role]);
+    }
+
+    public function delete_restaurant($role, $id)
+    {
+        $restaurant = Restaurant::find($id);
+        dd($restaurant);
+        Storage::delete('public/' . $restaurant->restaurant_photo);
+        $restaurant->delete();
+        return redirect()->route('show_restaurants', ['slug' => auth()->user()->role]);
     }
 
 
@@ -190,6 +238,51 @@ class AdminController extends Controller
         $restaurant->save();
 
         return redirect()->route('show_menus', ['slug' => auth()->user()->role]);
+    }
+
+    public function edit_menu($role, $id)
+    {
+        $menu = Menu::find($id);
+        return view('admin.forms.edit_menu', compact('menu'));
+    }
+
+    public function edit_menu_post(Request $request)
+    {
+        $request->validate(
+            [
+                'menu_name' => 'required|min:2|string|max:255',
+                'menu_description' => 'required|max:1000',
+                'menu_picture' => 'image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+            ],
+            []
+        );
+
+        $menu = Menu::find($request->id);
+        $menu->menu_name = $request->menu_name;
+        $menu->menu_description = $request->menu_description;
+
+        if (!empty($request->file('menu_picture'))) {
+            // dd(storage_path('app/public/'.$product->product_picture));
+
+            Storage::delete('public/' . $menu->menu_picture);
+
+            $path = $request->file('menu_picture')->store('public/restaurants/menu_pictures');
+
+            $menu->menu_picture = substr($path, 7);
+        }
+        $menu->save();
+
+        return redirect()->route('show_menus', ['slug' => auth()->user()->role]);
+    }
+
+    public function delete_menu($role, $id)
+    {
+        $menu = Menu::find($id);
+        // dd($menu);
+        Storage::delete('public/' . $menu->menu_picture);
+        $menu->delete();
+        return redirect()->route('show_menus', ['slug' => auth()->user()->role]);
+        // return redirect()->route('show_users', ['role' => $role]);
     }
 
     public function show_menus($slug)
@@ -282,9 +375,9 @@ class AdminController extends Controller
     function product_search_by_menu_id($id)
     {
         // $total = '';
-            $data = Product::where('menu_id', $id)
-                ->get();
-            //    $total = $data[0]->market_name;
+        $data = Product::where('menu_id', $id)
+            ->get();
+        //    $total = $data[0]->market_name;
         return $data;
     }
 
@@ -308,8 +401,8 @@ class AdminController extends Controller
 
         if (!empty($request->file('product_picture'))) {
             // dd(storage_path('app/public/'.$product->product_picture));
-            
-            Storage::delete('public/'.$product->product_picture);
+
+            Storage::delete('public/' . $product->product_picture);
 
             $path = $request->file('product_picture')->store('public/restaurants/product_pictures');
 
@@ -362,14 +455,13 @@ class AdminController extends Controller
         $pa = Product_attribute::find($id);
         $pa->delete();
         return redirect()->route('edit_product_with_attributes', ['slug' => auth()->user()->role, 'id' => $pid]);
-        // return redirect()->route('show_users', ['role' => $role]);
     }
 
-    public function delete_product($role, $pid, $id)
+    public function delete_product($role, $id)
     {
-        $pa = Product::find($id);
-        $pa->delete();
-        return redirect()->route('edit_product_with_attributes', ['slug' => auth()->user()->role, 'id' => $pid]);
-        // return redirect()->route('show_users', ['role' => $role]);
+        $product = Product::find($id);
+        Storage::delete('public/' . $product->product_picture);
+        $product->delete();
+        return redirect()->route('show_products', ['slug' => auth()->user()->role]);
     }
 }

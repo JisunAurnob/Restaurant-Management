@@ -49,7 +49,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     Route::get('{slug}/add-restaurant', [AdminController::class, 'add_restaurant'])->name('add_restaurant');
     Route::post('add-restaurant', [AdminController::class, 'add_restaurant_post'])->name('add_restaurant_post');
     Route::get('{slug}/edit-restaurant/{id}', [AdminController::class, 'edit_restaurant'])->name('edit_restaurant');
-    Route::post('{slug}/edit-restaurant', [AdminController::class, 'edit_restaurant_post'])->name('edit_restaurant_post');
+    Route::post('edit-restaurant', [AdminController::class, 'edit_restaurant_post'])->name('edit_restaurant_post');
+    Route::get('{slug}/delete-restaurant/{id}', [AdminController::class, 'delete_restaurant'])->name('delete_restaurant');
     Route::get('{slug}/restaurants', [AdminController::class, 'show_restaurants'])->name('show_restaurants');
     //Restaurant
 
@@ -57,7 +58,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     Route::get('{slug}/add-menu', [AdminController::class, 'add_menu'])->name('add_menu');
     Route::post('add-menu', [AdminController::class, 'add_menu_post'])->name('add_menu_post');
     Route::get('{slug}/edit-menu/{id}', [AdminController::class, 'edit_menu'])->name('edit_menu');
-    Route::post('{slug}/edit-menu', [AdminController::class, 'edit_restaurant_post'])->name('edit_menu_post');
+    Route::post('edit-menu', [AdminController::class, 'edit_menu_post'])->name('edit_menu_post');
+    Route::get('{slug}/delete-menu/{id}', [AdminController::class, 'delete_menu'])->name('delete_menu');
     Route::get('{slug}/menus', [AdminController::class, 'show_menus'])->name('show_menus');
     Route::get('menus-search/{id}', [AdminController::class, 'menu_search_by_restaurant_id'])->name('search_menu');
     //Menu
@@ -69,7 +71,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     Route::post('edit-product-with-attributes', [AdminController::class, 'edit_product_with_attributes_post'])->name('edit_product_with_attributes_post');
     Route::get('{slug}/products', [AdminController::class, 'show_products'])->name('show_products');
     Route::get('{slug}/{pid}/delete-product-attributes/{id}', [AdminController::class, 'delete_product_attribute'])->name('delete_product_attribute');
-    Route::get('{slug}/{pid}/delete-product/{id}', [AdminController::class, 'delete_product'])->name('delete_product');
+    Route::get('{slug}/delete-product/{id}', [AdminController::class, 'delete_product'])->name('delete_product');
     Route::get('products-search/{id}', [AdminController::class, 'product_search_by_menu_id'])->name('search_product');
     //Product
 

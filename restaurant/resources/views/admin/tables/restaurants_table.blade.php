@@ -69,7 +69,7 @@
                                 <td>{{$employee->city}}</td> --}}
                                 
                                 <td><a href="edit-restaurant/{{$restaurant->id}}" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;
-                                  <a href="restaurant/delete/{{$restaurant->id}}" onclick="return confirm('Are you sure you want to delete this restaurant?');" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>
+                                  <a href="delete-restaurant/{{$restaurant->id}}" onclick="return confirm('Are you sure you want to delete this restaurant?');" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>
                               </tr>
                               @endforeach
                             </tbody>
