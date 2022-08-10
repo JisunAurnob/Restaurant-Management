@@ -142,13 +142,13 @@
             
             <li class="nav-item">
               <a href="{{route('add_user', ['slug' => Auth::user()->role, 'role' => 'staff'])}}" class="nav-link {{ request()->is('admin/admin/add-user/staff') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-user-plus"></i>&nbsp;
                 <p>Add Staff</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('show_users', ['role' => 'staff','slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/admin/users/staff') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-eye"></i>&nbsp;
                 <p>Show Staffs</p>
               </a>
             </li>
@@ -170,13 +170,13 @@
             
             <li class="nav-item">
               <a href="{{route('add_user', ['role' => 'client','slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/add-user/client') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-user-plus"></i>&nbsp;
                 <p>Add Client</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('show_users', ['slug' => Auth::user()->role, 'role' => 'client'])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/users/client') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-eye"></i>&nbsp;
                 <p>Show Clients</p>
               </a>
             </li>
@@ -198,13 +198,13 @@
             
             <li class="nav-item">
               <a href="{{route('add_restaurant', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/add-restaurant') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-plus"></i>&nbsp;
                 <p>Add Restaurant</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('show_restaurants', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/restaurants') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-eye"></i>&nbsp;
                 <p>Show Restaurants</p>
               </a>
             </li>
@@ -226,13 +226,13 @@
             
             <li class="nav-item">
               <a href="{{route('add_menu', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/add-menu') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-plus"></i>&nbsp;
                 <p>Add Menu</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('show_menus', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/menus') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-eye"></i>&nbsp;
                 <p>Show Menus</p>
               </a>
             </li>
@@ -254,13 +254,13 @@
             
             <li class="nav-item">
               <a href="{{route('add_product', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/add-product') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-plus"></i>&nbsp;
                 <p>Add Product</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{route('show_products', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/products') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-eye"></i>&nbsp;
                 <p>Show Products</p>
               </a>
             </li>

@@ -176,7 +176,7 @@
                               
                                 $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.product_name+'</td>'+'<td style="max-width: 250px;">'+value.product_description+'</td>'+'<td>'+
                                   '<img src="'+'{{asset('storage').'/'}}'+value.product_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+'<td>'+value.product_status+'</td>'+
-                                  '<td><a href="edit-product-with-attributes/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a href="menu/delete/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
+                                  '<td><a href="edit-product-with-attributes/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a href="delete-product/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });
 

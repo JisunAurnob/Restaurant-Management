@@ -144,12 +144,16 @@
                               
                                 $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.menu_name+'</td>'+'<td style="max-width: 250px;">'+value.menu_description+'</td>'+'<td>'+
                                   '<img src="'+'{{asset('storage').'/'}}'+value.menu_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+
-                                  '<td><a href="edit-menu/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a href="menu/delete/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
+                                  '<td><a href="edit-menu/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a id="delete_button" href="delete-menu/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });
 
                         }
                     })
+                });
+
+                $("#delete_button").click(function() {
+                    confirm('Are you sure you want to delete this menu? All products under this menu will be gone!');
                 });
 
             });
