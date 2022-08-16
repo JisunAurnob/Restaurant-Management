@@ -62,7 +62,7 @@
                                 {{-- <td>{{$employee->email}}</td> --}}
                                 <td>{{$restaurant->phone}}</td>
                                 <td>{{$restaurant->address}}</td>
-                                <td><img src="{{ asset('storage/'.$restaurant->restaurant_photo) }}" style="max-height: 200px; max-width: 200px;"></td>
+                                <td><img src="{{ asset($restaurant->restaurant_photo) }}" style="max-height: 200px; max-width: 200px;"></td>
                                 {{-- <td>{{$employee->experience}}</td>
                                 <td>{{$employee->salary}}</td>
                                 <td>{{$employee->vacation}}</td>

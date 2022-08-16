@@ -120,6 +120,21 @@
                                     </div>
 
                                     <div class="row mb-3">
+                                        <label for="product_price" class="col-md-4 col-form-label text-md-end">Product price (৳)<span class="text-danger">*</span></label>
+
+                                        <div class="col-md-6">
+                                            <input type="number" id="product_price" name="product_price" class="form-control @error('product_price') is-invalid @enderror" min="0"
+                                            value="0" step="1">
+
+                                            @error('product_price')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
                                         <label class="col-md-4 col-form-label text-md-end" for="input_photo">Product
                                             Image<span class="text-danger">*</span></label>
                                         <div class="col-md-6">
@@ -187,8 +202,8 @@
                     })
                 });
 
-                $("label").click(function() {
-                    alert('Label Clicked');
+                // $("label").click(function() {
+                //     alert('Label Clicked');
                     // $("#product_name").prop("readonly",true);
                     // $.ajax({
                     //     url: url,
@@ -201,7 +216,7 @@
                     //     success: success,
                     //     dataType: dataType
                     // });
-                });
+                // });
 
             });
         </script>

@@ -132,6 +132,21 @@
                                 </div>
 
                                 <div class="row mb-3">
+                                    <label class="col-md-4 col-form-label text-md-end" for="bg_photo">Background Theme Image</label>
+                                    <div class="col-md-6">
+                                        <img id="preview-bg-image" src=""
+                                        alt="Restaurant Picture" onerror="this.style.display='none'" style="max-height: 250px; max-width: 250px;">
+                                        <input id="bg_photo" type="file" class="form-control-file @error('bg_photo') is-invalid @enderror" name="bg_photo" value="">
+                                        
+                                        @error('bg_photo')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
                                     <label for="opening_time" class="col-md-4 col-form-label text-md-end">Opening Time<span class="text-danger">*</span></label>
         
                                     <div class="col-md-6">
@@ -191,9 +206,24 @@
 
     @push('scripts')
         <script type="text/javascript">
-            $(document).ready(function() {
-
-            });
+            $(document).ready(function (e) {
+             
+               
+             $('#bg_photo').change(function(){
+                      
+              let reader = new FileReader();
+           
+              reader.onload = (e) => { 
+           
+               $('#preview-bg-image').css('display', 'inline-block');
+                $('#preview-bg-image').attr('src', e.target.result); 
+              }
+           
+              reader.readAsDataURL(this.files[0]); 
+             
+             });
+             
+          });
         </script>
 
         <script src="{{ asset('js/admin/imagepreview.js') }}"></script>

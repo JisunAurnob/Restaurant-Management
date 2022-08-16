@@ -22,7 +22,8 @@ class RestaurantController extends Controller
             $customValue['email'] = $restaurant['email'];
             $customValue['phone'] = $restaurant['phone'];
             $customValue['address'] = $restaurant['address'];
-            $customValue['restaurant_photo'] = asset('storage/' . $restaurant['restaurant_photo']);
+            $customValue['restaurant_photo'] = asset($restaurant['restaurant_photo']);
+            $customValue['bg_photo'] = asset($restaurant['bg_photo']);
             $customValue['opening_time'] = date("h:i A", strtotime($restaurant['opening_time']));
             $customValue['closing_time'] = date("h:i A", strtotime($restaurant['closing_time']));
             $customValue['business_days'] = $restaurant['business_days'];
@@ -52,7 +53,7 @@ class RestaurantController extends Controller
                 $customValue['id'] = $menu['id'];
                 $customValue['menu_name'] = $menu['menu_name'];
                 $customValue['menu_description'] = $menu['menu_description'];
-                $customValue['menu_picture'] = asset('storage/' . $menu['menu_picture']);
+                $customValue['menu_picture'] = asset($menu['menu_picture']);
                 $customValue['slug'] = $menu['slug'];
                 $customValue['restaurant_id'] = $menu['restaurant_id'];
                 $customValue['created_at'] = $menu['created_at'];
@@ -73,14 +74,21 @@ class RestaurantController extends Controller
 
         if (Restaurant::where('slug', '=', $slug)->exists()) {
 
-            $products = Product::where('menu_id', '=', $menuID)->with('product_attributes')->get();
+            if (Menu::where('slug', '=', $menuID)->exists()) {
+            $menu = Menu::where('slug', '=', $menuID)->first();
+            $products = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
+            }
+            else{
+                $products = Product::where('menu_id', '=', $menuID)->with('product_attributes')->get();
+            }
             foreach ($products as $product) {
                 // dd($menu);
                 $customValue['id'] = $product['id'];
                 $customValue['product_name'] = $product['product_name'];
                 $customValue['product_description'] = $product['product_description'];
-                $customValue['product_picture'] = asset('storage/' . $product['product_picture']);
+                $customValue['product_picture'] = asset($product['product_picture']);
                 $customValue['product_type'] = $product['product_type'];
+                $customValue['product_price'] = $product['product_price'];
                 $customValue['product_status'] = $product['product_status'];
                 $customValue['product_attributes'] = $product['product_attributes'];
                 $productsCustom->add($customValue);
@@ -105,7 +113,7 @@ class RestaurantController extends Controller
                 $customValue['id'] = $product['id'];
                 $customValue['product_name'] = $product['product_name'];
                 $customValue['product_description'] = $product['product_description'];
-                $customValue['product_picture'] = asset('storage/' . $product['product_picture']);
+                $customValue['product_picture'] = asset($product['product_picture']);
                 $customValue['product_type'] = $product['product_type'];
                 $customValue['product_status'] = $product['product_status'];
                 $customValue['product_attributes'] = $product['product_attributes'];
@@ -128,7 +136,7 @@ class RestaurantController extends Controller
             $customValue['id'] = $product['id'];
             $customValue['product_name'] = $product['product_name'];
             $customValue['product_description'] = $product['product_description'];
-            $customValue['product_picture'] = asset('storage/' . $product['product_picture']);
+            $customValue['product_picture'] = asset($product['product_picture']);
             $customValue['product_type'] = $product['product_type'];
             $customValue['product_status'] = $product['product_status'];
             $customValue['product_attributes'] = $product['product_attributes'];

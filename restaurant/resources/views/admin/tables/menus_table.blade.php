@@ -143,7 +143,7 @@
                               // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
                               
                                 $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.menu_name+'</td>'+'<td style="max-width: 250px;">'+value.menu_description+'</td>'+'<td>'+
-                                  '<img src="'+'{{asset('storage').'/'}}'+value.menu_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+
+                                  '<img src="'+'{{asset('')}}'+value.menu_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+
                                   '<td><a href="edit-menu/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a id="delete_button" href="delete-menu/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });

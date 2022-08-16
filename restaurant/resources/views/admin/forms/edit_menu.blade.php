@@ -65,7 +65,7 @@
                                 <div class="row mb-3">
                                     <label class="col-md-4 col-form-label text-md-end" for="input_photo">Menu Image<span class="text-danger">*</span></label>
                                     <div class="col-md-6">
-                                        <img id="preview-image" src="{{ asset('storage/' . $menu->menu_picture) }}"
+                                        <img id="preview-image" src="{{ asset($menu->menu_picture) }}"
                                         alt="Product Picture" onerror="this.style.display='none'"
                                         style="max-height: 250px; max-width: 250px;">
 
