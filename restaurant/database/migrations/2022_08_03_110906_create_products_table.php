@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('product_description','1000');
             $table->string('product_picture')->nullable();
             $table->string('product_type');
+            $table->string('product_price');
             $table->string('product_status');
             $table->unsignedBigInteger('menu_id');
             $table->timestamps();

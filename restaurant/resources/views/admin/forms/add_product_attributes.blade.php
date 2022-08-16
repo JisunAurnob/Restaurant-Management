@@ -77,8 +77,18 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
+                                    <label for="product_price">Product price (৳)<span class="text-danger">*</span></label>
+                                        <input type="number" id="product_price" name="product_price" class="form-control @error('product_price') is-invalid @enderror" min="0"
+                                        value="{{ $product[0]->product_price }}" step="1">
+                                        @error('product_price')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
                                     <label for="input_photo">Product Image<span class="text-danger">*</span></label><br>
-                                    <img id="preview-image" src="{{ asset('storage/' . $product[0]->product_picture) }}"
+                                    <img id="preview-image" src="{{ asset($product[0]->product_picture) }}"
                                         alt="Product Picture" onerror="this.style.display='none'"
                                         style="max-height: 250px; max-width: 250px;">
                                     <input id="input_photo" type="file"

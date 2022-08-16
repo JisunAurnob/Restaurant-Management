@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Storage;
+// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 use App\Models\User;
 use App\Models\Restaurant;
@@ -11,6 +12,7 @@ use App\Models\Product;
 use App\Models\Product_attribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Image;
 
 class AdminController extends Controller
 {
@@ -101,6 +103,7 @@ class AdminController extends Controller
                 'restaurant_type' => 'required|string',
                 'slogan' => 'required|string|max:255',
                 'restaurant_photo' => 'required|image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
+                'bg_photo' => 'image|mimes:jpg,png,jpeg,gif,svg,webp',
                 'opening_time' => 'required',
                 'closing_time' => 'required',
                 'business_days' => 'required|string|max:255'
@@ -108,10 +111,10 @@ class AdminController extends Controller
             []
         );
 
-        if (!empty($request->file('restaurant_photo'))) {
-            $path = $request->file('restaurant_photo')->store('public/restaurants/pictures');
-            // $var->Picture= substr($path, 6, 3000);
-        }
+        // if (!empty($request->file('restaurant_photo'))) {
+        //     $path = $request->file('restaurant_photo')->store('public/restaurants/pictures');
+        //     // $var->Picture= substr($path, 6, 3000);
+        // }
 
         $restaurant = new Restaurant();
         $restaurant->restaurant_name = $request->restaurant_name;
@@ -120,7 +123,35 @@ class AdminController extends Controller
         $restaurant->email = $request->email;
         $restaurant->phone = $request->phone;
         $restaurant->address = $request->address;
-        $restaurant->restaurant_photo = substr($path, 7);
+        //------------------------------------------
+
+        if ($request->hasFile('restaurant_photo')) {
+            $image_tmp = $request->file('restaurant_photo');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $restaurant->restaurant_photo = $imagePath;
+            }
+        }
+
+        if ($request->hasFile('bg_photo')) {
+            $image_tmp = $request->file('bg_photo');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/pictures/background/'.$imgName;
+                Image::make($image_tmp)->save($imagePath);
+                $restaurant->bg_photo = $imagePath;
+            }
+        }
+        else{
+            $restaurant->bg_photo = 'restaurants/pictures/background/default_bg.jpg';
+        }
+
+        //-----------------------------------------
+        // $restaurant->restaurant_photo = substr($path, 7);
         $restaurant->opening_time = $request->opening_time;
         $restaurant->closing_time = $request->closing_time;
         $restaurant->business_days = $request->business_days;
@@ -158,6 +189,7 @@ class AdminController extends Controller
                 'restaurant_type' => 'required|string',
                 'slogan' => 'required|string|max:255',
                 'restaurant_photo' => 'image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
+                'bg_photo' => 'image|mimes:jpg,png,jpeg,gif,svg,webp',
                 'opening_time' => 'required',
                 'closing_time' => 'required',
                 'business_days' => 'required|string|max:255'
@@ -172,15 +204,37 @@ class AdminController extends Controller
         $restaurant->email = $request->email;
         $restaurant->phone = $request->phone;
         $restaurant->address = $request->address;
-        if (!empty($request->file('restaurant_photo'))) {
-            // dd(storage_path('app/public/'.$product->product_picture));
+        //------------------------------------------
 
-            Storage::delete('public/' . $restaurant->restaurant_photo);
-
-            $path = $request->file('restaurant_photo')->store('public/restaurants/pictures');
-
-            $restaurant->restaurant_photo = substr($path, 7);
+        if ($request->hasFile('restaurant_photo')) {
+            File::delete($restaurant->restaurant_photo);
+            $image_tmp = $request->file('restaurant_photo');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $restaurant->restaurant_photo = $imagePath;
+            }
         }
+
+        if ($request->hasFile('bg_photo')) {
+
+            if($restaurant->bg_photo!='restaurants/pictures/background/default_bg.jpg'){
+                
+            File::delete($restaurant->bg_photo);
+            }
+            $image_tmp = $request->file('bg_photo');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/pictures/background/'.$imgName;
+                Image::make($image_tmp)->save($imagePath);
+                $restaurant->bg_photo = $imagePath;
+            }
+        }
+
+        //-----------------------------------------
         $restaurant->opening_time = $request->opening_time;
         $restaurant->closing_time = $request->closing_time;
         $restaurant->business_days = $request->business_days;
@@ -193,8 +247,12 @@ class AdminController extends Controller
     public function delete_restaurant($role, $id)
     {
         $restaurant = Restaurant::find($id);
-        dd($restaurant);
-        Storage::delete('public/' . $restaurant->restaurant_photo);
+        // dd($restaurant);
+        File::delete($restaurant->restaurant_photo);
+        if($restaurant->bg_photo!='restaurants/pictures/background/default_bg.jpg'){
+                
+            File::delete($restaurant->bg_photo);
+        }
         $restaurant->delete();
         return redirect()->route('show_restaurants', ['slug' => auth()->user()->role]);
     }
@@ -224,15 +282,29 @@ class AdminController extends Controller
             []
         );
 
-        if (!empty($request->file('menu_picture'))) {
-            $path = $request->file('menu_picture')->store('public/restaurants/menu_pictures');
-            // $var->Picture= substr($path, 6, 3000);
-        }
+        // if (!empty($request->file('menu_picture'))) {
+        //     $path = $request->file('menu_picture')->store('public/restaurants/menu_pictures');
+        //     // $var->Picture= substr($path, 6, 3000);
+        // }
 
         $restaurant = new Menu();
         $restaurant->menu_name = $request->menu_name;
         $restaurant->menu_description = $request->menu_description;
-        $restaurant->menu_picture = substr($path, 7);
+        //------------------------------------------
+
+        if ($request->hasFile('menu_picture')) {
+            $image_tmp = $request->file('menu_picture');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/menu_pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $restaurant->menu_picture = $imagePath;
+            }
+        }
+
+        //-----------------------------------------
+        // $restaurant->menu_picture = substr($path, 7);
         $restaurant->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '', $request->menu_name)));
         $restaurant->restaurant_id = $request->restaurant_id;
         $restaurant->save();
@@ -260,15 +332,20 @@ class AdminController extends Controller
         $menu = Menu::find($request->id);
         $menu->menu_name = $request->menu_name;
         $menu->menu_description = $request->menu_description;
+        $menu->slug = strtolower(preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '', $request->menu_name)));
 
-        if (!empty($request->file('menu_picture'))) {
-            // dd(storage_path('app/public/'.$product->product_picture));
 
-            Storage::delete('public/' . $menu->menu_picture);
-
-            $path = $request->file('menu_picture')->store('public/restaurants/menu_pictures');
-
-            $menu->menu_picture = substr($path, 7);
+        if ($request->hasFile('menu_picture')) {
+            
+            File::delete($menu->menu_picture);
+            $image_tmp = $request->file('menu_picture');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/menu_pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $menu->menu_picture = $imagePath;
+            }
         }
         $menu->save();
 
@@ -279,7 +356,7 @@ class AdminController extends Controller
     {
         $menu = Menu::find($id);
         // dd($menu);
-        Storage::delete('public/' . $menu->menu_picture);
+        File::delete($menu->menu_picture);
         $menu->delete();
         return redirect()->route('show_menus', ['slug' => auth()->user()->role]);
         // return redirect()->route('show_users', ['role' => $role]);
@@ -332,22 +409,38 @@ class AdminController extends Controller
                 'product_name' => 'required|min:2|string|max:255',
                 'product_description' => 'required|max:1000',
                 'product_type' => 'required|string',
+                'product_price' => 'required',
                 'product_picture' => 'required|image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
                 'menu_id' => 'required'
             ],
             []
         );
 
-        if (!empty($request->file('product_picture'))) {
-            $path = $request->file('product_picture')->store('public/restaurants/product_pictures');
-            // $var->Picture= substr($path, 6, 3000);
-        }
+        // if (!empty($request->file('product_picture'))) {
+        //     $path = $request->file('product_picture')->store('public/restaurants/product_pictures');
+        //     // $var->Picture= substr($path, 6, 3000);
+        // }
 
         $product = new Product();
         $product->product_name = $request->product_name;
         $product->product_description = $request->product_description;
         $product->product_type = $request->product_type;
-        $product->product_picture = substr($path, 7);
+        $product->product_price = $request->product_price;
+        //------------------------------------------
+
+        if ($request->hasFile('product_picture')) {
+            $image_tmp = $request->file('product_picture');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/product_pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $product->product_picture = $imagePath;
+            }
+        }
+
+        //-----------------------------------------
+        // $product->product_picture = substr($path, 7);
         $product->menu_id = $request->menu_id;
         $product->product_status = 'upcoming';
         $product->save();
@@ -388,6 +481,7 @@ class AdminController extends Controller
                 'product_name' => 'required|min:2|string|max:255',
                 'product_description' => 'required|max:1000',
                 'product_type' => 'required|string',
+                'product_price' => 'required',
                 'product_picture' => 'image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
                 'product_status' => 'required|string'
             ],
@@ -398,16 +492,23 @@ class AdminController extends Controller
         $product->product_name = $request->product_name;
         $product->product_description = $request->product_description;
         $product->product_type = $request->product_type;
+        $product->product_price = $request->product_price;
 
-        if (!empty($request->file('product_picture'))) {
-            // dd(storage_path('app/public/'.$product->product_picture));
+        //------------------------------------------
 
-            Storage::delete('public/' . $product->product_picture);
-
-            $path = $request->file('product_picture')->store('public/restaurants/product_pictures');
-
-            $product->product_picture = substr($path, 7);
+        if ($request->hasFile('product_picture')) {
+            File::delete($product->product_picture);
+            $image_tmp = $request->file('product_picture');
+            if ($image_tmp->isValid()) {
+                $extension = $image_tmp->getClientOriginalExtension();
+                $imgName = rand(111,99999).'.'.$extension;
+                $imagePath = 'restaurants/product_pictures/'.$imgName;
+                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                $product->product_picture = $imagePath;
+            }
         }
+
+        //-----------------------------------------
         $product->product_status = $request->product_status;
         $product->save();
 
@@ -460,7 +561,7 @@ class AdminController extends Controller
     public function delete_product($role, $id)
     {
         $product = Product::find($id);
-        Storage::delete('public/' . $product->product_picture);
+        File::delete($product->product_picture);
         $product->delete();
         return redirect()->route('show_products', ['slug' => auth()->user()->role]);
     }
