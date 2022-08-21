@@ -115,6 +115,7 @@ class RestaurantController extends Controller
                 $customValue['product_description'] = $product['product_description'];
                 $customValue['product_picture'] = asset($product['product_picture']);
                 $customValue['product_type'] = $product['product_type'];
+                $customValue['product_price'] = $product['product_price'];
                 $customValue['product_status'] = $product['product_status'];
                 $customValue['product_attributes'] = $product['product_attributes'];
                 $productsCustom->add($customValue);
