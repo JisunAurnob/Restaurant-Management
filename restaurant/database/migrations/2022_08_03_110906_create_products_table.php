@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('product_picture')->nullable();
             $table->string('product_type');
             $table->string('product_price');
-            $table->string('product_status');
+            $table->string('availability');
+            $table->string('product_status')->nullable();
             $table->unsignedBigInteger('menu_id');
             $table->timestamps();
 

@@ -64,7 +64,7 @@
                                     <th>Product Description</th>
                                     <th>Price</th>
                                     <th>Product Picture</th>
-                                    <th>Product Status</th>
+                                    <th>Product Availabilty</th>
                                     {{-- <th>Experience</th>
                                 <th>Salary</th>
                                 <th>Vacation</th>
@@ -175,7 +175,7 @@
                               // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
                               
                                 $('#menu-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.product_name+'</td>'+'<td style="max-width: 250px;">'+value.product_description+'</td>'+'<td>'+value.product_price+'</td>'+'<td>'+
-                                  '<img src="'+'{{asset('')}}'+value.product_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+'<td>'+value.product_status+'</td>'+
+                                  '<img src="'+'{{asset('')}}'+value.product_picture+'" style="max-height: 250px; max-width: 250px;">'+'</td>'+'<td>'+value.availability+'</td>'+
                                   '<td><a href="edit-product-with-attributes/'+value.id+'" class="btn btn-warning"><i class="fas fa-edit"></i></a>&nbsp;<a href="delete-product/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });

@@ -131,7 +131,7 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $restaurant->restaurant_photo = $imagePath;
             }
         }
@@ -213,7 +213,7 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $restaurant->restaurant_photo = $imagePath;
             }
         }
@@ -298,7 +298,7 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/menu_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $restaurant->menu_picture = $imagePath;
             }
         }
@@ -343,7 +343,7 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/menu_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $menu->menu_picture = $imagePath;
             }
         }
@@ -410,6 +410,7 @@ class AdminController extends Controller
                 'product_description' => 'required|max:1000',
                 'product_type' => 'required|string',
                 'product_price' => 'required',
+                'availability' => 'required',
                 'product_picture' => 'required|image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
                 'menu_id' => 'required'
             ],
@@ -426,6 +427,8 @@ class AdminController extends Controller
         $product->product_description = $request->product_description;
         $product->product_type = $request->product_type;
         $product->product_price = $request->product_price;
+        $product->product_status = $request->product_status;
+        
         //------------------------------------------
 
         if ($request->hasFile('product_picture')) {
@@ -434,7 +437,7 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/product_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $product->product_picture = $imagePath;
             }
         }
@@ -442,7 +445,7 @@ class AdminController extends Controller
         //-----------------------------------------
         // $product->product_picture = substr($path, 7);
         $product->menu_id = $request->menu_id;
-        $product->product_status = 'upcoming';
+        $product->availability = $request->availability;
         $product->save();
 
         return redirect()->route('show_products', ['slug' => auth()->user()->role]);
@@ -483,7 +486,7 @@ class AdminController extends Controller
                 'product_type' => 'required|string',
                 'product_price' => 'required',
                 'product_picture' => 'image|mimes:jpg,png,jpeg,gif,svg,webp|max:2048',
-                'product_status' => 'required|string'
+                'availability' => 'required|string'
             ],
             []
         );
@@ -503,12 +506,13 @@ class AdminController extends Controller
                 $extension = $image_tmp->getClientOriginalExtension();
                 $imgName = rand(111,99999).'.'.$extension;
                 $imagePath = 'restaurants/product_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(868,868)->save($imagePath);
+                Image::make($image_tmp)->resize(250,250)->save($imagePath);
                 $product->product_picture = $imagePath;
             }
         }
 
         //-----------------------------------------
+        $product->availability = $request->availability;
         $product->product_status = $request->product_status;
         $product->save();
 

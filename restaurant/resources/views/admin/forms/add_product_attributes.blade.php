@@ -101,21 +101,27 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <label for="product_status">Status<span class="text-danger">*</span></label>
-                                    <select id="product_status" name="product_status" class="form-control custom-select">
+                                    <label for="availability">Availability<span class="text-danger">*</span></label>
+                                    <select id="availability" name="availability" class="form-control custom-select">
                                         <option>Select one</option>
-                                        <option value="upcoming" @if ($product[0]->product_status == 'upcoming') selected @endif>Upcoming
+                                        <option value="upcoming" @if ($product[0]->availability == 'upcoming') selected @endif>Upcoming
                                         </option>
-                                        <option value="available" @if ($product[0]->product_status == 'available') selected @endif>
+                                        <option value="available" @if ($product[0]->availability == 'available') selected @endif>
                                             Available</option>
-                                        <option value="outofstock" @if ($product[0]->product_status == 'outofstock') selected @endif>Out Of
+                                        <option value="outofstock" @if ($product[0]->availability == 'outofstock') selected @endif>Out Of
                                             Stock</option>
                                     </select>
-                                    @error('product_status')
+                                    @error('availability')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="product_status"
+                                        value="popular" id="product_status" @if ($product[0]->product_status == 'popular') checked @endif>
+                                    <label class="form-check-label" for="product_status">Show the item in
+                                        popular section</label>
                                 </div>
                                 <input type="submit" value="Save Changes" class="btn btn-success float-right">
                             </form>
