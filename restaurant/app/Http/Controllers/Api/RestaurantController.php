@@ -39,7 +39,7 @@ class RestaurantController extends Controller
             return $errorMsg;
         }
     }
-
+    
     public function menuInfo($slug)
     {
         if (Restaurant::where('slug', '=', $slug)->exists()) {
@@ -56,13 +56,82 @@ class RestaurantController extends Controller
                 $customValue['menu_picture'] = asset($menu['menu_picture']);
                 $customValue['slug'] = $menu['slug'];
                 $customValue['restaurant_id'] = $menu['restaurant_id'];
-                $customValue['created_at'] = $menu['created_at'];
-                $customValue['updated_at'] = $menu['updated_at'];
                 $menusCustom->add($customValue);
             }
             return $menusCustom;
         } else {
             $errorMsg['error'] = 'The Restaurant Does Not Exist In Our Database';
+            return $errorMsg;
+        }
+    }
+
+    public function all_products_with_menu($slug)
+    {
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            // dd($restaurant_id['id']);
+            $menuProducts = collect();
+            // $customValue = array();
+            $menuWithProducts = Menu::where('restaurant_id', '=', $restaurant_id['id'])->select('id','menu_name')->get();
+            foreach ($menuWithProducts as $menu) {
+                // dd($menu['products']);
+                    $productWithAttributes = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
+                    if($productWithAttributes){
+                    $customValue['menu_id']=$menu->id;
+                    $customValue['menu_name']=$menu->menu_name;
+                        foreach ($productWithAttributes as $productWithAttribute) {
+                            
+                            $cstmValue['id'] = $productWithAttribute['id'];
+                            $cstmValue['product_name'] = $productWithAttribute['product_name'];
+                            $cstmValue['product_description'] = $productWithAttribute['product_description'];
+                            $cstmValue['product_picture'] = asset($productWithAttribute['product_picture']);
+                            $cstmValue['product_type'] = $productWithAttribute['product_type'];
+                            $cstmValue['product_price'] = $productWithAttribute['product_price'];
+                            $cstmValue['product_status'] = $productWithAttribute['product_status'];
+                            $cstmValue['product_attributes'] = $productWithAttribute['product_attributes'];
+                        $customValue['products']=$cstmValue;
+                        }
+                    $menuProducts->add($customValue);
+                }
+            }
+            return $menuProducts;
+        } else {
+            $errorMsg['error'] = 'The Restaurant Does Not Exist In Our Database';
+            return $errorMsg;
+        }
+    }
+
+    public function popular_products($slug)
+    {
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            // dd($restaurant_id['id']);
+            $popularProducts = collect();
+            // $customValue = array();
+            $menuWithProducts = Menu::where('restaurant_id', '=', $restaurant_id['id'])->select('id')->get();
+            // dd($allProducts);
+            foreach ($menuWithProducts as $menu) {
+                // dd($menu['products']);
+                    $productWithAttributes = Product::where('menu_id', '=', $menu->id)->where('product_status', '=', 'popular')->with('product_attributes')->get();
+                    if(!empty($productWithAttributes)){
+                    foreach ($productWithAttributes as $productWithAttribute) {
+                        
+                        $customValue['id'] = $productWithAttribute['id'];
+                        $customValue['product_name'] = $productWithAttribute['product_name'];
+                        $customValue['product_description'] = $productWithAttribute['product_description'];
+                        $customValue['product_picture'] = asset($productWithAttribute['product_picture']);
+                        $customValue['product_type'] = $productWithAttribute['product_type'];
+                        $customValue['product_price'] = $productWithAttribute['product_price'];
+                        $customValue['product_status'] = $productWithAttribute['product_status'];
+                        $customValue['product_attributes'] = $productWithAttribute['product_attributes'];
+                    $popularProducts->add($customValue);
+                    }
+                }
+            }
+            // dd($popularProducts[0]);
+            return $popularProducts;
+        } else {
+            $errorMsg['error'] = 'The Restaurant Or Popular Products Does Not Exist';
             return $errorMsg;
         }
     }

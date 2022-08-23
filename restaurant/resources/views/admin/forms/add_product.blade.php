@@ -54,7 +54,8 @@
                                         <div class="col-md-6">
                                             <label for="menu_id" class="col-md-4 col-form-label text-md-end">Menu<span
                                                     class="text-danger">*</span></label>
-                                            <select name="menu_id" id="menu_id" class="form-control @error('menu_id') is-invalid @enderror"
+                                            <select name="menu_id" id="menu_id"
+                                                class="form-control @error('menu_id') is-invalid @enderror"
                                                 data-live-search="true" aria-label="Select Menu">
                                                 <option>Select Menu</option>
                                             </select>
@@ -120,17 +121,42 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="product_price" class="col-md-4 col-form-label text-md-end">Product price (৳)<span class="text-danger">*</span></label>
+                                        <label for="product_price" class="col-md-4 col-form-label text-md-end">Product price
+                                            (৳)<span class="text-danger">*</span></label>
 
                                         <div class="col-md-6">
-                                            <input type="number" id="product_price" name="product_price" class="form-control @error('product_price') is-invalid @enderror" min="0"
-                                            value="0" step="1">
+                                            <input type="number" id="product_price" name="product_price"
+                                                class="form-control @error('product_price') is-invalid @enderror"
+                                                min="0" value="0" step="1">
 
                                             @error('product_price')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="availability"
+                                            class="col-md-4 col-form-label text-md-end">Availability<span
+                                                class="text-danger">*</span></label>
+                                        <div class="col-md-6">
+                                            <select id="availability" name="availability"
+                                                class="form-control @error('availability') is-invalid @enderror">
+                                                <option value="">Select one</option>
+                                                <option value="upcoming">Upcoming
+                                                </option>
+                                                <option value="available">
+                                                    Available</option>
+                                                <option value="outofstock">Out Of
+                                                    Stock</option>
+                                            </select>
+                                            @error('availability')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -150,6 +176,18 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="product_status" class="col-md-4 col-form-label text-md-end"></label>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" name="product_status"
+                                                    value="popular" id="product_status">
+                                                <label class="form-check-label" for="product_status">Show the item in
+                                                    popular section</label>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -204,18 +242,18 @@
 
                 // $("label").click(function() {
                 //     alert('Label Clicked');
-                    // $("#product_name").prop("readonly",true);
-                    // $.ajax({
-                    //     url: url,
-                    //     method: 'POST',
-                    //     data: {
-                    //         product_name: "Donald Duck",
-                    //         city: "Duckburg"
-                    //     },
-                    //     dataType: 'json',
-                    //     success: success,
-                    //     dataType: dataType
-                    // });
+                // $("#product_name").prop("readonly",true);
+                // $.ajax({
+                //     url: url,
+                //     method: 'POST',
+                //     data: {
+                //         product_name: "Donald Duck",
+                //         city: "Duckburg"
+                //     },
+                //     dataType: 'json',
+                //     success: success,
+                //     dataType: dataType
+                // });
                 // });
 
             });
