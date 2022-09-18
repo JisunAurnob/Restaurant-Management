@@ -27,4 +27,5 @@ Route::group(['prefix' => 'restaurant', 'namespace'=> 'api'], function () {
     Route::get('{slug}/{menuID}/products', [RestaurantController::class, 'products_by_menu']);
     Route::get('{slug}/{menuID}/products/{productType}', [RestaurantController::class, 'products_by_menu_and_product_type']);
     Route::get('{slug}/product/{productID}', [RestaurantController::class, 'product_by_id']);
+    Route::post('{slug}/order', [RestaurantController::class, 'order']);
 });

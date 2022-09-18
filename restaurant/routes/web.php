@@ -75,6 +75,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     Route::get('products-search/{id}', [AdminController::class, 'product_search_by_menu_id'])->name('search_product');
     //Product
 
+    //Order
+    Route::get('{slug}/orders', [AdminController::class, 'getOrders'])->name('getOrders');
+    Route::get('orders/{id}', [AdminController::class, 'orders_by_restaurant_id'])->name('orderById');
+    Route::get('{slug}/order-details/{id}', [AdminController::class, 'viewOrderDetails'])->name('orderDetails');
+    //Order
+
 });
 
 

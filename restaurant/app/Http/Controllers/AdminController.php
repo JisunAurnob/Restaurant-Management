@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Models\Menu;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Product_attribute;
 use Illuminate\Http\Request;
@@ -568,5 +569,39 @@ class AdminController extends Controller
         File::delete($product->product_picture);
         $product->delete();
         return redirect()->route('show_products', ['slug' => auth()->user()->role]);
+    }
+
+    public function getOrders($slug)
+    {
+        if (auth()->user()->role == 'client') {
+            $restaurants = Restaurant::where('client_id', '=', auth()->user()->id)->select('id','restaurant_name')->get();
+            // dd($restaurant);
+            
+        } else if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff') {
+            $restaurants = Restaurant::all();
+        }
+        return view('admin.tables.orders_table', compact('restaurants'));
+    }
+
+    function orders_by_restaurant_id($id)
+    {
+        if (Restaurant::where('id', $id)->exists()) {
+            $data = Order::where('restaurant_id', $id)
+                ->get();
+            
+        }
+        return $data;
+    }
+
+    public function viewOrderDetails($slug,$id){
+    	$title = "Order Details";
+        // dd($id);
+		$cart = array();
+    	$order = Order::find($id);
+    	$cart = json_decode($order->cart,'true');
+
+        // dd($cart);
+
+    	return view('admin.orderDetails')->with(compact('order','cart','title'));
     }
 }

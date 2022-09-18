@@ -266,9 +266,17 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a href="{{route('getOrders', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/orders') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-th"></i>
+            <p>
+              Orders
+            </p>
+          </a>
+        </li>
         @endif
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-th"></i>
             <p>
@@ -284,7 +292,7 @@
               Simple Link
             </p>
           </a>
-        </li>
+        </li> --}}
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
