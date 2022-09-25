@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Restaurant;
 use App\Models\Menu;
 use App\Models\Product;
+use App\Models\Order;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Cart;
 
 class RestaurantController extends Controller
 {
@@ -39,7 +43,7 @@ class RestaurantController extends Controller
             return $errorMsg;
         }
     }
-    
+
     public function menuInfo($slug)
     {
         if (Restaurant::where('slug', '=', $slug)->exists()) {
@@ -72,25 +76,32 @@ class RestaurantController extends Controller
             // dd($restaurant_id['id']);
             $menuProducts = collect();
             // $customValue = array();
-            $menuWithProducts = Menu::where('restaurant_id', '=', $restaurant_id['id'])->select('id','menu_name')->get();
+            $menuWithProducts = Menu::where('restaurant_id', '=', $restaurant_id['id'])->select('id', 'menu_name')->get();
             foreach ($menuWithProducts as $menu) {
                 // dd($menu['products']);
-                    $productWithAttributes = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
-                    if($productWithAttributes){
-                    $customValue['menu_id']=$menu->id;
-                    $customValue['menu_name']=$menu->menu_name;
-                        foreach ($productWithAttributes as $productWithAttribute) {
-                            
-                            $cstmValue['id'] = $productWithAttribute['id'];
-                            $cstmValue['product_name'] = $productWithAttribute['product_name'];
-                            $cstmValue['product_description'] = $productWithAttribute['product_description'];
-                            $cstmValue['product_picture'] = asset($productWithAttribute['product_picture']);
-                            $cstmValue['product_type'] = $productWithAttribute['product_type'];
-                            $cstmValue['product_price'] = $productWithAttribute['product_price'];
-                            $cstmValue['product_status'] = $productWithAttribute['product_status'];
-                            $cstmValue['product_attributes'] = $productWithAttribute['product_attributes'];
-                        $customValue['products']=$cstmValue;
-                        }
+                // dd($menu->id);
+                $productWithAttributes = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
+                if ($productWithAttributes) {
+                    $customValue['menu_id'] = $menu->id;
+                    $customValue['menu_name'] = $menu->menu_name;
+                    // dd($productWithAttributes);
+
+                    $cstmproducts = collect();
+                    foreach ($productWithAttributes as $productWithAttribute) {
+
+                        $cstmValue['id'] = $productWithAttribute['id'];
+                        $cstmValue['product_name'] = $productWithAttribute['product_name'];
+                        $cstmValue['product_description'] = $productWithAttribute['product_description'];
+                        $cstmValue['product_picture'] = asset($productWithAttribute['product_picture']);
+                        $cstmValue['product_type'] = $productWithAttribute['product_type'];
+                        $cstmValue['product_price'] = $productWithAttribute['product_price'];
+                        $cstmValue['product_status'] = $productWithAttribute['product_status'];
+                        $cstmValue['product_attributes'] = $productWithAttribute['product_attributes'];
+                        $cstmproducts->add($cstmValue);
+                    }
+                    $customValue['products'] = $cstmproducts;
+                    // $cstmproducts=null;
+                    // dd($customValue);
                     $menuProducts->add($customValue);
                 }
             }
@@ -112,10 +123,10 @@ class RestaurantController extends Controller
             // dd($allProducts);
             foreach ($menuWithProducts as $menu) {
                 // dd($menu['products']);
-                    $productWithAttributes = Product::where('menu_id', '=', $menu->id)->where('product_status', '=', 'popular')->with('product_attributes')->get();
-                    if(!empty($productWithAttributes)){
+                $productWithAttributes = Product::where('menu_id', '=', $menu->id)->where('product_status', '=', 'popular')->with('product_attributes')->get();
+                if (!empty($productWithAttributes)) {
                     foreach ($productWithAttributes as $productWithAttribute) {
-                        
+
                         $customValue['id'] = $productWithAttribute['id'];
                         $customValue['product_name'] = $productWithAttribute['product_name'];
                         $customValue['product_description'] = $productWithAttribute['product_description'];
@@ -124,7 +135,7 @@ class RestaurantController extends Controller
                         $customValue['product_price'] = $productWithAttribute['product_price'];
                         $customValue['product_status'] = $productWithAttribute['product_status'];
                         $customValue['product_attributes'] = $productWithAttribute['product_attributes'];
-                    $popularProducts->add($customValue);
+                        $popularProducts->add($customValue);
                     }
                 }
             }
@@ -144,10 +155,9 @@ class RestaurantController extends Controller
         if (Restaurant::where('slug', '=', $slug)->exists()) {
 
             if (Menu::where('slug', '=', $menuID)->exists()) {
-            $menu = Menu::where('slug', '=', $menuID)->first();
-            $products = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
-            }
-            else{
+                $menu = Menu::where('slug', '=', $menuID)->first();
+                $products = Product::where('menu_id', '=', $menu->id)->with('product_attributes')->get();
+            } else {
                 $products = Product::where('menu_id', '=', $menuID)->with('product_attributes')->get();
             }
             foreach ($products as $product) {
@@ -215,5 +225,120 @@ class RestaurantController extends Controller
             $errorMsg['error'] = 'The Restaurant Does Not Exist In Our Database';
             return $errorMsg;
         }
+    }
+
+    public function order(Request $request, $slug)
+    {
+        $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+
+        if ($request->isMethod('post')) {
+            $message = "";
+            $data = $request->all();
+
+
+            $rules = [
+                'products' => 'required',
+            ];
+            $customMessages = [
+                'products.required' => 'You need to add products to cart for order!'
+            ];
+            $this->validate($request, $rules, $customMessages);
+
+
+            Cart::session($restaurant_id);
+            $i = 0;
+            foreach ($data['products'] as $product) {
+                // dd($i);
+                // dd($product['id']);
+                Cart::add(array(
+                    'id' => $i,
+                    // 'id' => (int)$product['id'],
+                    'name' => $product['product_name'],
+                    'price' => $product['product_price'],
+
+                    'quantity' => $product['qty'],
+                    'attributes' => array('size' => $product['size']),
+                ));
+                $i++;
+            }
+            // dd(Cart::getContent());
+            $order = new Order();
+            if (!empty($restaurant_id)) {
+                $order->restaurant_id = $restaurant_id['id'];
+            }
+            $order->order_number = Str::random(6) . time();
+            $order->cart = Cart::getContent();
+            $order->totalQty = Cart::getTotalQuantity();
+
+
+            if (!empty($data['vat'])) {
+
+                $order->vat = $data['vat'];
+                $order->total_amount = Cart::getTotal() + (int)$data['vat'];
+            } else {
+
+                $order->vat = 0;
+                $order->total_amount = Cart::getTotal();
+            }
+            $order->status = 1;
+            if (!empty($data['order_note'])) {
+                $order->order_note = $data['order_note'];
+            }
+            if (!empty($data['customer_name'])) {
+                $order->customer_name = $data['customer_name'];
+                $order->customer_email = $data['customer_email'];
+                $order->customer_phone = $data['customer_phone'];
+            }
+
+            $order->table_number = $data['table_number'];
+
+            $order->save();
+
+            $message = 'Order Placed Successfully!';
+            return response()->json($message);
+        }
+    }
+
+    function orders_by_phone($slug, $phone)
+    {
+        $ordersCustom = collect();
+        $customValue = array();
+
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            $orders = Order::where([
+                'restaurant_id' => $restaurant_id['id'],
+                'customer_phone' => $phone,
+            ])->latest('id')->get();
+        }
+        if (!empty($orders)) {
+            foreach ($orders as $order) {
+                // dd($menu);
+                $customValue['id'] = $order['id'];
+                $customValue['order_number'] = $order['order_number'];
+                $customValue['table_number'] = $order['table_number'];
+                $customValue['totalQty'] = $order['totalQty'];
+                $customValue['total_amount'] = $order['total_amount'];
+                $customValue['time'] = date("g:iA", strtotime($order['created_at']->toTimeString()));
+                $customValue['date'] = $order['created_at']->toDateString();
+                $customValue['status'] = $order['status'];
+                $customValue['products'] = json_decode($order->cart, 'true');
+                $ordersCustom->add($customValue);
+            }
+        }
+        return $ordersCustom;
+    }
+
+    public function cancelOrder($slug, $id)
+    {
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            Order::where([
+                'restaurant_id' => $restaurant_id['id'],
+                'id' => $id,
+         ])->update(['status' => 4]);
+        }
+        $message = 'Order Canceled!';
+        return response()->json($message);
     }
 }

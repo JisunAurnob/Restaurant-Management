@@ -266,9 +266,48 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item {{ request()->is('admin/'.Auth::user()->role.'/pending') ? 'menu-open' : '' }}
+          {{ request()->is('admin/'.Auth::user()->role.'/orders/all') || request()->is('admin/'.Auth::user()->role.'/orders/preparing_order') || request()->is('admin/'.Auth::user()->role.'/orders/pending') ? 'menu-open' : '' }}">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-edit"></i>
+            <p>
+              Manage Orders
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            
+            <li class="nav-item">
+              <a href="{{route('getOrders', ['slug' => Auth::user()->role, 'order_status'=>'pending'])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/orders/pending') ? 'active' : '' }}">
+                <i class="fas fa-clock"></i>&nbsp;
+                <p>Pending Orders</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('getOrders', ['slug' => Auth::user()->role, 'order_status'=>'preparing_order'])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/orders/preparing_order') ? 'active' : '' }}">
+                <i class="fas fa-check"></i>&nbsp;
+                <p>Confirmed Orders</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{route('getOrders', ['slug' => Auth::user()->role, 'order_status' => 'all'])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/orders/all') ? 'active' : '' }}">
+                <i class="fas fa-eye"></i>&nbsp;
+                <p>All Orders</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        {{-- <li class="nav-item">
+          <a href="{{route('getOrders', ['slug' => Auth::user()->role])}}" class="nav-link {{ request()->is('admin/'.Auth::user()->role.'/orders') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-th"></i>
+            <p>
+              Orders
+            </p>
+          </a>
+        </li> --}}
         @endif
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-th"></i>
             <p>
@@ -284,7 +323,7 @@
               Simple Link
             </p>
           </a>
-        </li>
+        </li> --}}
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

@@ -1,0 +1,16 @@
+.status_pending{
+    color: 	#077E8C;
+    font-size:large;
+}
+.status_confirmed{
+    color: 	#deb410;
+    font-size: large;
+}
+.status_delivered{
+    color: 	#10f414;
+    font-size: large;
+}
+.status_canceled{
+    color: 	red;
+    font-size: large;
+}
