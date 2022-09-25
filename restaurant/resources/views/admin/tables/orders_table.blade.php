@@ -59,7 +59,7 @@
                                     <th style="width: 10px"><center>Table No</center></th>
                                     <th style="width: 10px">Total Quantity</th>
                                     <th>Total Price</th>
-                                    <th>Time & Date</th>
+                                    <th>Date & Time</th>
                                     <th>Status</th>
                                     {{-- <th>Experience</th>
                                 <th>Salary</th>
@@ -110,7 +110,7 @@
 
                 $("#restaurant_id").change(function() {
                     var id = $(this).val();
-                    $('#menu-row').empty();
+                    $('#order-row').empty();
                     // var url = '{{route("search_menu", ["id" =>'id'])}}'
                     var url = '{{ route("orderById",":id") }}';
                     url = url.replace(':id', id);
@@ -122,13 +122,13 @@
                         data: {},
                         dataType: 'json',
                         success: function(data) {
-                          console.log(data);
+                        //   console.log(data);
                             $.each(data, function(key, value) {
                               console.log(data);
                               // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
                               
                                 $('#order-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.order_number+'</td>'+'<td style="max-width: 250px;">'+value.table_number+'</td>'+'<td>'+
-                                    value.totalQty+'</td>'+'<td>'+value.total_amount+'</td>'+'<td>'+value.created_at+'</td>'+'<td>'+value.status+'</td>'+
+                                    value.totalQty+'</td>'+'<td>'+value.total_amount+'</td>'+'<td>'+value.date+' @ '+value.time+'</td>'+'<td>'+value.status+'</td>'+
                                   '<td><a href="order-details/'+value.id+'" class="btn btn-warning"><i class="fas fa-eye"></i></a>&nbsp;<a id="delete_button" href="delete-menu/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
                                   +'</tr>')
                             });

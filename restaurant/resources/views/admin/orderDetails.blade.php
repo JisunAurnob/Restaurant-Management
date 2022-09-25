@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('styles')
-    {{-- <link rel="stylesheet" href="{{ asset('something.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('css/orderDetails.css') }}">
 @endpush
 @section('title', 'Restaurants')
 @section('content')
@@ -25,10 +25,13 @@
 
         <!-- Main content -->
         <section class="content">
+            @if(session()->has('message'))
+                <p class="alert alert-success"> {{ session()->get('message') }}</p>
+            @endif
+            @if(session()->has('errMsg'))
+                <p class="alert alert-danger"> {{ session()->get('errMsg') }}</p>
+            @endif
             <div class="card">
-                @if (!empty(request('msg')))
-                    <div class="alert alert-success"> {{ request('msg') }} </div>
-                @endif
                 {{-- <div class="card-header">
                           <h3 class="card-title">Bordered Table</h3>
                         </div> --}}
@@ -40,18 +43,35 @@
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6>Order Information</h6>
+                        <div class="col-md-4">
+                            <h5>Order Information</h5>
                             <p>Order No: {{ $order->order_number }}</p>
-                            <p>Order Status: {{ $order->status }}</p>
-                            <p>Total Price: {{ $order->total_amount }}</p>
+                            <p>Order Date: {{ $order->created_at->toDateString() }}</p>
+                            <p>Order Time: {{ date("g:iA", strtotime($order->created_at->toTimeString())) }}</p>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Customer Information</h6>
+                        <div class="col-md-4">
+                            <p>Order Status: <span class="@if ($order->status=='pending') status_pending 
+                                @elseif ($order->status=='preparing_order') status_confirmed 
+                                @elseif ($order->status=='delivered') status_delivered
+                                @elseif ($order->status=='canceled') status_canceled @endif">{{ $order->status }}</span></p>
+                            <p>Total Price: {{ $order->total_amount }} ৳</p>
+                            @if ($order->status=="pending")
+                            <a class="btn btn-primary" href="{{$order->id}}/change-status/2">Confirm Order</a>
+                            @endif
+                            @if ($order->status=="preparing_order")
+                            <a class="btn btn-primary" href="{{$order->id}}/change-status/3">Confirm Delivery</a>
+                            @endif
+                            @if ($order->status=="pending" || $order->status=="preparing_order")
+                            <a class="btn btn-danger" href="{{$order->id}}/change-status/4">Cancel Order</a>
+                            @endif
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Customer Information</h5>
                             <p>Customer Name: {{ $order->customer_name }}</p>
                             <p>Customer Email: {{ $order->customer_email }}</p>
                             <p>Customer Phone: {{ $order->customer_phone }}</p>
                         </div>
+                        
                         {{-- Order No: {{$order->order_number}}<br> --}}
                         <div class="col-md-12">
                             <table class="table table-striped">
@@ -73,15 +93,15 @@
                                             <td>{{ $cart[$i]['name'] }}</td>
                                             {{-- {{ dd($cart[$i]['attributes']['size']) }} --}}
                                             <td>{{ $cart[$i]['attributes']['size'] }}</td>
-                                            <td>{{ $cart[$i]['price'] }}</td>
-                                            <td>{{ $cart[$i]['quantity'] * $cart[$i]['price'] }}</td>
+                                            <td>{{ $cart[$i]['price'] }} ৳</td>
+                                            <td>{{ $cart[$i]['quantity'] * $cart[$i]['price'] }} ৳</td>
                                         </tr>
                                     @endfor
                                 </tbody>
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h6>Payment Method: {{ $order->payment_method }}</h6>
+                            {{-- <h6>Payment Method: {{ $order->payment_method }}</h6> --}}
                         </div>
                         <div class="col-md-6">
                             <table class="table">
@@ -98,19 +118,19 @@
                                     <tr>
                                         <td>Sub Total: </td>
                                         <td>
-                                            {{ $order->total_amount - $order->vat }}
+                                            ৳ {{ $order->total_amount - $order->vat }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Vat: </td>
                                         <td>
-                                            {{ $order->vat }}
+                                            ৳ {{ $order->vat }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Total: </td>
                                         <td>
-                                            {{ $order->total_amount }}
+                                            ৳ {{ $order->total_amount }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -153,38 +173,6 @@
         <script type="text/javascript">
             $(document).ready(function() {
 
-                $("#restaurant_id").change(function() {
-                    var id = $(this).val();
-                    $('#menu-row').empty();
-                    // var url = '{{route("search_menu", ["id" =>'id'])}}'
-                    var url = '{{ route("orderById",":id") }}';
-                    url = url.replace(':id', id);
-                    console.log(url);
-                    // var firstDropVal = $('#').val();
-                    $.ajax({
-                        url: url,
-                        method: 'GET',
-                        data: {},
-                        dataType: 'json',
-                        success: function(data) {
-                          console.log(data);
-                            $.each(data, function(key, value) {
-                              console.log(data);
-                              // '<td>'+value.menu_name'</td>'+'<td>'+value.menu_description'</td>'+'<td>'+value.menu_description'</td>'
-                              
-                                $('#order-row').append('<tr><td>'+value.id+'</td>'+'<td>'+value.order_number+'</td>'+'<td style="max-width: 250px;">'+value.table_number+'</td>'+'<td>'+
-                                    value.totalQty+'</td>'+'<td>'+value.total_amount+'</td>'+'<td>'+value.created_at+'</td>'+'<td>'+value.status+'</td>'+
-                                  '<td><a href="order-details/'+value.id+'" class="btn btn-warning"><i class="fas fa-eye"></i></a>&nbsp;<a id="delete_button" href="delete-menu/'+value.id+'" class="btn btn-danger"><i class="fas fa-trash"></i></a></td>'
-                                  +'</tr>')
-                            });
-
-                        }
-                    })
-                });
-
-                $("#delete_button").click(function() {
-                    confirm('Are you sure you want to delete this menu? All products under this menu will be gone!');
-                });
 
             });
         </script>

@@ -130,9 +130,9 @@ class AdminController extends Controller
             $image_tmp = $request->file('restaurant_photo');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $restaurant->restaurant_photo = $imagePath;
             }
         }
@@ -141,13 +141,12 @@ class AdminController extends Controller
             $image_tmp = $request->file('bg_photo');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/pictures/background/'.$imgName;
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/pictures/background/' . $imgName;
                 Image::make($image_tmp)->save($imagePath);
                 $restaurant->bg_photo = $imagePath;
             }
-        }
-        else{
+        } else {
             $restaurant->bg_photo = 'restaurants/pictures/background/default_bg.jpg';
         }
 
@@ -212,24 +211,24 @@ class AdminController extends Controller
             $image_tmp = $request->file('restaurant_photo');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $restaurant->restaurant_photo = $imagePath;
             }
         }
 
         if ($request->hasFile('bg_photo')) {
 
-            if($restaurant->bg_photo!='restaurants/pictures/background/default_bg.jpg'){
-                
-            File::delete($restaurant->bg_photo);
+            if ($restaurant->bg_photo != 'restaurants/pictures/background/default_bg.jpg') {
+
+                File::delete($restaurant->bg_photo);
             }
             $image_tmp = $request->file('bg_photo');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/pictures/background/'.$imgName;
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/pictures/background/' . $imgName;
                 Image::make($image_tmp)->save($imagePath);
                 $restaurant->bg_photo = $imagePath;
             }
@@ -250,8 +249,8 @@ class AdminController extends Controller
         $restaurant = Restaurant::find($id);
         // dd($restaurant);
         File::delete($restaurant->restaurant_photo);
-        if($restaurant->bg_photo!='restaurants/pictures/background/default_bg.jpg'){
-                
+        if ($restaurant->bg_photo != 'restaurants/pictures/background/default_bg.jpg') {
+
             File::delete($restaurant->bg_photo);
         }
         $restaurant->delete();
@@ -297,9 +296,9 @@ class AdminController extends Controller
             $image_tmp = $request->file('menu_picture');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/menu_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/menu_pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $restaurant->menu_picture = $imagePath;
             }
         }
@@ -337,14 +336,14 @@ class AdminController extends Controller
 
 
         if ($request->hasFile('menu_picture')) {
-            
+
             File::delete($menu->menu_picture);
             $image_tmp = $request->file('menu_picture');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/menu_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/menu_pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $menu->menu_picture = $imagePath;
             }
         }
@@ -429,16 +428,16 @@ class AdminController extends Controller
         $product->product_type = $request->product_type;
         $product->product_price = $request->product_price;
         $product->product_status = $request->product_status;
-        
+
         //------------------------------------------
 
         if ($request->hasFile('product_picture')) {
             $image_tmp = $request->file('product_picture');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/product_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/product_pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $product->product_picture = $imagePath;
             }
         }
@@ -505,9 +504,9 @@ class AdminController extends Controller
             $image_tmp = $request->file('product_picture');
             if ($image_tmp->isValid()) {
                 $extension = $image_tmp->getClientOriginalExtension();
-                $imgName = rand(111,99999).'.'.$extension;
-                $imagePath = 'restaurants/product_pictures/'.$imgName;
-                Image::make($image_tmp)->resize(250,250)->save($imagePath);
+                $imgName = rand(111, 99999) . '.' . $extension;
+                $imagePath = 'restaurants/product_pictures/' . $imgName;
+                Image::make($image_tmp)->resize(250, 250)->save($imagePath);
                 $product->product_picture = $imagePath;
             }
         }
@@ -571,37 +570,131 @@ class AdminController extends Controller
         return redirect()->route('show_products', ['slug' => auth()->user()->role]);
     }
 
-    public function getOrders($slug)
+    public function getOrders($slug, $order_status = null, $rest_id = null)
     {
+        $ordersCustom = collect();
+        $customValue = array();
         if (auth()->user()->role == 'client') {
-            $restaurants = Restaurant::where('client_id', '=', auth()->user()->id)->select('id','restaurant_name')->get();
-            // dd($restaurant);
-            
+            $restaurants = Restaurant::where('client_id', '=', auth()->user()->id)->select('id', 'restaurant_name')->get();
+            // dd($restaurants[0]->id);
+            if ($rest_id == null) {
+                if (Restaurant::where('id', $restaurants[0]->id)->exists()) {
+
+                    if ($order_status && $order_status != "all") {
+                        $orders = Order::where(['restaurant_id' => $restaurants[0]->id, 'status' => $order_status])
+                            ->get();
+                    } elseif ($order_status == "all") {
+                        $orders = Order::where(['restaurant_id' => $restaurants[0]->id])
+                            ->get();
+                    } else {
+                        $orders = Order::where(['restaurant_id' => $restaurants[0]->id, 'status' => $order_status])
+                            ->get();
+                    }
+                }
+            } else {
+                if (Restaurant::where('id', $rest_id)->exists()) {
+                    if ($order_status && $order_status != "all") {
+                        $orders = Order::where(['restaurant_id' => $rest_id, 'status' => $order_status])
+                            ->get();
+                    } elseif ($order_status == "all") {
+                        $orders = Order::where(['restaurant_id' => $rest_id])
+                            ->get();
+                    } else {
+                        $orders = Order::where(['restaurant_id' => $restaurants[0]->id, 'status' => $order_status])
+                            ->get();
+                    }
+                }
+            }
+            if (!empty($orders)) {
+                foreach ($orders as $order) {
+                    // dd($menu);
+                    $customValue['id'] = $order['id'];
+                    $customValue['order_number'] = $order['order_number'];
+                    $customValue['table_number'] = $order['table_number'];
+                    $customValue['totalQty'] = $order['totalQty'];
+                    $customValue['total_amount'] = $order['total_amount'];
+                    $customValue['cart'] = $order['cart'];
+                    $customValue['time'] = date("g:iA", strtotime($order['created_at']->toTimeString()));
+                    $customValue['date'] = $order['created_at']->toDateString();
+                    $customValue['status'] = $order['status'];
+                    $ordersCustom->add($customValue);
+                }
+
+                // dd($orders);
+            }
         } else if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff') {
             $restaurants = Restaurant::all();
+            if ($order_status) {
+                $orders = Order::where(['status' => $order_status])
+                    ->get();
+            } elseif ($order_status == "all") {
+                $orders = Order::all();
+            } else {
+                $orders = Order::all();
+            }
         }
-        return view('admin.tables.orders_table', compact('restaurants'));
+        if ($rest_id == null) {
+            $rest_id = $restaurants[0]->id;
+        }
+        return view('admin.order_requests', compact('restaurants', 'orders', 'order_status', 'rest_id'));
     }
 
     function orders_by_restaurant_id($id)
     {
+        $ordersCustom = collect();
+        $customValue = array();
+
         if (Restaurant::where('id', $id)->exists()) {
-            $data = Order::where('restaurant_id', $id)
+            $orders = Order::where('restaurant_id', $id)
                 ->get();
-            
         }
-        return $data;
+        if (!empty($orders)) {
+            foreach ($orders as $order) {
+                // dd($menu);
+                $customValue['id'] = $order['id'];
+                $customValue['order_number'] = $order['order_number'];
+                $customValue['table_number'] = $order['table_number'];
+                $customValue['totalQty'] = $order['totalQty'];
+                $customValue['total_amount'] = $order['total_amount'];
+                $customValue['time'] = date("g:iA", strtotime($order['created_at']->toTimeString()));
+                $customValue['date'] = $order['created_at']->toDateString();
+                $customValue['status'] = $order['status'];
+                $ordersCustom->add($customValue);
+            }
+        }
+        return $ordersCustom;
     }
 
-    public function viewOrderDetails($slug,$id){
-    	$title = "Order Details";
+    public function viewOrderDetails($slug, $id)
+    {
+        $title = "Order Details";
         // dd($id);
-		$cart = array();
-    	$order = Order::find($id);
-    	$cart = json_decode($order->cart,'true');
+        $cart = array();
+        $order = Order::find($id);
+        $cart = json_decode($order->cart, 'true');
 
         // dd($cart);
 
-    	return view('admin.orderDetails')->with(compact('order','cart','title'));
+        return view('admin.orderDetails')->with(compact('order', 'cart', 'title'));
+    }
+
+    public function confirmOrder($slug, $id, $status)
+    {
+
+        Order::where('id', $id)->update(['status' => $status]);
+
+        // dd($cart);
+        $message = "";
+        if ($status == 2) {
+            $message = "Order Confirmed";
+        }
+        if ($status == 3) {
+            $message = "Order Delivered";
+        }
+        if ($status == 4) {
+            $message = "Order Canceled";
+            return redirect()->back()->with('errMsg', "Order Canceled");
+        }
+        return redirect()->back()->with('message', $message);
     }
 }

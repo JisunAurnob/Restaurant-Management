@@ -255,7 +255,7 @@ class RestaurantController extends Controller
                     // 'id' => (int)$product['id'],
                     'name' => $product['product_name'],
                     'price' => $product['product_price'],
-                    
+
                     'quantity' => $product['qty'],
                     'attributes' => array('size' => $product['size']),
                 ));
@@ -276,9 +276,9 @@ class RestaurantController extends Controller
                 $order->vat = $data['vat'];
                 $order->total_amount = Cart::getTotal() + (int)$data['vat'];
             } else {
-                
-            $order->vat = 0;
-            $order->total_amount = Cart::getTotal();
+
+                $order->vat = 0;
+                $order->total_amount = Cart::getTotal();
             }
             $order->status = 1;
             if (!empty($data['order_note'])) {
@@ -297,5 +297,48 @@ class RestaurantController extends Controller
             $message = 'Order Placed Successfully!';
             return response()->json($message);
         }
+    }
+
+    function orders_by_phone($slug, $phone)
+    {
+        $ordersCustom = collect();
+        $customValue = array();
+
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            $orders = Order::where([
+                'restaurant_id' => $restaurant_id['id'],
+                'customer_phone' => $phone,
+            ])->latest('id')->get();
+        }
+        if (!empty($orders)) {
+            foreach ($orders as $order) {
+                // dd($menu);
+                $customValue['id'] = $order['id'];
+                $customValue['order_number'] = $order['order_number'];
+                $customValue['table_number'] = $order['table_number'];
+                $customValue['totalQty'] = $order['totalQty'];
+                $customValue['total_amount'] = $order['total_amount'];
+                $customValue['time'] = date("g:iA", strtotime($order['created_at']->toTimeString()));
+                $customValue['date'] = $order['created_at']->toDateString();
+                $customValue['status'] = $order['status'];
+                $customValue['products'] = json_decode($order->cart, 'true');
+                $ordersCustom->add($customValue);
+            }
+        }
+        return $ordersCustom;
+    }
+
+    public function cancelOrder($slug, $id)
+    {
+        if (Restaurant::where('slug', '=', $slug)->exists()) {
+            $restaurant_id = Restaurant::where('slug', '=', $slug)->select('id')->first();
+            Order::where([
+                'restaurant_id' => $restaurant_id['id'],
+                'id' => $id,
+         ])->update(['status' => 4]);
+        }
+        $message = 'Order Canceled!';
+        return response()->json($message);
     }
 }

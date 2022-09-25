@@ -76,9 +76,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['AdminIsValid','auth']], fun
     //Product
 
     //Order
-    Route::get('{slug}/orders', [AdminController::class, 'getOrders'])->name('getOrders');
-    Route::get('orders/{id}', [AdminController::class, 'orders_by_restaurant_id'])->name('orderById');
+    Route::get('{slug}/orders/{order_status?}/{rest_id?}', [AdminController::class, 'getOrders'])->name('getOrders');
+    Route::get('orders/{id}/{order_status?}', [AdminController::class, 'orders_by_restaurant_id'])->name('orderById');
     Route::get('{slug}/order-details/{id}', [AdminController::class, 'viewOrderDetails'])->name('orderDetails');
+    Route::get('{slug}/order-details/{id}/change-status/{status}', [AdminController::class, 'confirmOrder'])->name('changeStatus');
     //Order
 
 });
